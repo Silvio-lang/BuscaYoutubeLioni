@@ -20,6 +20,7 @@
         <button type="submit">Buscar</button>
         <button type="button" id="remover">Remover</button>
         <button type="button" id="incluir">Incluir</button>
+        <button type="button" id="ordenar">Ordenar A–Z</button>
     </form>
 
     <h3>Mais buscados</h3>
@@ -36,7 +37,6 @@
       "Bem livre Brasil",
       "Vivendo Mundo Afora",
       "SEGREDOS DA MA",
-
       "Família Schinemann",
       "Abrace a Trip - Pedro & Bru...",
       "Pâmela e Max na Suíça",
@@ -47,7 +47,6 @@
       "GetOutside - Ale & Duda",
       "Desbrava Trip",
       "Next Sunset",
-
       "Balanço Geral Florianópolis",
       "Programa SC no Ar",
       "Maaxcam Ao Vivo",
@@ -103,6 +102,12 @@
                 atualizarLista();
                 entrada.value = '';
             }
+        });
+
+        document.getElementById('ordenar').addEventListener('click', function () {
+            canais.sort((a, b) => a.localeCompare(b));
+            salvarLista();
+            atualizarLista();
         });
 
         atualizarLista();
