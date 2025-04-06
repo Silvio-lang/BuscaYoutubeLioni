@@ -4,72 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Busca no YouTube</title>
+    <style>
+        ul { list-style-type: none; padding: 0; }
+        li { cursor: pointer; padding: 4px; border-bottom: 1px solid #ddd; }
+        li:hover { background-color: #f0f0f0; }
+        button { margin: 5px 2px; }
+    </style>
 </head>
 <body>
     <h1>Buscar no YouTube</h1>
     <h2>Os últimos serão os primeiros!</h2>
+
     <form id="formBusca">
         <input type="text" id="termoBusca" placeholder="Digite o termo de busca">
         <button type="submit">Buscar</button>
+        <button type="button" id="remover">Remover</button>
+        <button type="button" id="incluir">Incluir</button>
     </form>
 
-    <div id="resultados"></div>
-
     <h3>Mais buscados</h3>
-    <ul id="maisBuscados">
-
-      <li>Rota Livre Pelo Mundo</li>
-      <li>Aventuras de Guto</li>
-      <li>Adeline Camargo</li>
-      <li>Sem Destino Oficial</li>
-      <li>Por Aí de Kombi</li>
-      <li>Vou sem volta</li>
-      <li>Bem livre Brasil</li>
-      <li>Vivendo Mundo Afora</li>
-      <li>SEGREDOS DA MA</li>
-
-      <li>Família Schinemann</li>
-      <li>Abrace a Trip - Pedro & Bru...</li>
-      <li>Pâmela e Max na Suíça</li>
-      <li>Comunidade Cristo</li>
-      <li>Paulo Landim</li>
-      <li>Jekriza</li>
-      <li>A Noruega e Eu</li>
-      <li>GetOutside - Ale & Duda</li>
-      <li>Desbrava Trip</li>
-      <li>Next Sunset</li>
-
-      <li>Balanço Geral Florianópolis</li>
-      <li>Programa SC no Ar</li>
-      <li>Maaxcam Ao Vivo</li>
-      <li>oiluiz TV</li>
-      <li>AXCAM</li>
-      <li>Adeline Camargo Flix</li>
-      <li>Júlio e Eu</li>
-      <li>Por Onde Fui</li>
-      <li>Sou Mochileiro</li>
-    </ul>
-    <!-- Edite os itens acima conforme desejar -->
+    <ul id="maisBuscados"></ul>
 
     <script>
+        let canais = JSON.parse(localStorage.getItem('canais')) || [
+      "Rota Livre Pelo Mundo",
+      "Aventuras de Guto",
+      "Adeline Camargo",
+      "Sem Destino Oficial",
+      "Por Aí de Kombi",
+      "Vou sem volta",
+      "Bem livre Brasil",
+      "Vivendo Mundo Afora",
+      "SEGREDOS DA MA",
+
+      "Família Schinemann",
+      "Abrace a Trip - Pedro & Bru...",
+      "Pâmela e Max na Suíça",
+      "Comunidade Cristo",
+      "Paulo Landim",
+      "Jekriza",
+      "A Noruega e Eu",
+      "GetOutside - Ale & Duda",
+      "Desbrava Trip",
+      "Next Sunset",
+
+      "Balanço Geral Florianópolis",
+      "Programa SC no Ar",
+      "Maaxcam Ao Vivo",
+      "oiluiz TV",
+      "AXCAM",
+      "Adeline Camargo Flix",
+      "Júlio e Eu",
+      "Por Onde Fui",
+      "Sou Mochileiro"
+        ];
+
+        const lista = document.getElementById('maisBuscados');
+        const entrada = document.getElementById('termoBusca');
+
+        function salvarLista() {
+            localStorage.setItem('canais', JSON.stringify(canais));
+        }
+
+        function atualizarLista() {
+            lista.innerHTML = '';
+            canais.forEach(canal => {
+                const li = document.createElement('li');
+                li.textContent = canal;
+                li.addEventListener('click', () => {
+                    entrada.value = canal;
+                });
+                lista.appendChild(li);
+            });
+        }
+
         document.getElementById('formBusca').addEventListener('submit', function(e) {
             e.preventDefault();
-            const termo = document.getElementById('termoBusca').value;
-            const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(termo)}&sp=CAI%3D`;
-            window.open(url, '_blank');
+            const termo = entrada.value.trim();
+            if (termo) {
+                const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(termo)}&sp=CAI%3D`;
+                window.location.href = url;
+            }
         });
 
-        document.querySelectorAll('#maisBuscados li').forEach(function(item) {
-            item.style.cursor = 'pointer';
-            item.addEventListener('click', function() {
-                const termo = item.textContent;
-                document.getElementById('termoBusca').value = termo;
-                document.getElementById('formBusca').dispatchEvent(new Event('submit'));
-            });
+        document.getElementById('remover').addEventListener('click', function() {
+            const termo = entrada.value.trim();
+            canais = canais.filter(c => c.toLowerCase() !== termo.toLowerCase());
+            salvarLista();
+            atualizarLista();
+            entrada.value = '';
         });
+
+        document.getElementById('incluir').addEventListener('click', function() {
+            const termo = entrada.value.trim();
+            if (termo && !canais.some(c => c.toLowerCase() === termo.toLowerCase())) {
+                canais.push(termo);
+                salvarLista();
+                atualizarLista();
+                entrada.value = '';
+            }
+        });
+
+        atualizarLista();
     </script>
 </body>
 </html>
-
-
-
